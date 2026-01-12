@@ -107,10 +107,10 @@ def generate_lua_code(config_path='config.json', template_path='main.lua.templat
                     end
         		else
             Fix{i}Finish=false
-        			Fix{i}Test=false
-        			Fix{i}HPCB=false
-        			WriteModbus({modbus_status},"W",1)
-        			iStep{i} = 1
+        		Fix{i}Test=false
+        		Fix{i}HPCB=false
+        		WriteModbus({modbus_status},"W",1)
+        		iStep{i} = 1
         		end		 
         end"""))
 
@@ -177,30 +177,49 @@ class App:
     def __init__(self, root):
         self.root = root
         self.root.title("Lua 程式碼產生器")
-        self.root.geometry("500x150")
+        
+        # UI enlargement adjustments: Increase window size from 500x150 to 800x250
+        self.root.geometry("800x250")
 
-        # Style
+        # UI enlargement adjustments: Configure global fonts and component sizes
         style = ttk.Style(self.root)
         style.theme_use("clam")
+        
+        # UI enlargement adjustments: Set global default font size
+        style.configure('.', font=("TkDefaultFont", 14))
+        
+        # UI enlargement adjustments: Configure button font and padding
+        style.configure('TButton', font=("TkDefaultFont", 13), padding=10)
+        
+        # UI enlargement adjustments: Configure entry font and padding
+        style.configure('TEntry', font=("TkDefaultFont", 13), padding=5)
+        
+        # UI enlargement adjustments: Configure label frame label font
+        style.configure('TLabelframe.Label', font=("TkDefaultFont", 14))
+        
+        # UI enlargement adjustments: Configure label font
+        style.configure('TLabel', font=("TkDefaultFont", 14))
 
-        # Frame
-        main_frame = ttk.Frame(root, padding="10 10 10 10")
+        # UI enlargement adjustments: Increase main frame padding from "10 10 10 10" to "20 20 20 20"
+        main_frame = ttk.Frame(root, padding="20 20 20 20")
         main_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Config file selection
-        config_frame = ttk.LabelFrame(main_frame, text="設定檔", padding="10")
+        # UI enlargement adjustments: Increase LabelFrame padding
+        config_frame = ttk.LabelFrame(main_frame, text="設定檔", padding="15")
         config_frame.pack(fill=tk.X, expand=True)
 
         self.config_path_var = tk.StringVar(value="config.json")
-        config_entry = ttk.Entry(config_frame, textvariable=self.config_path_var, width=50)
-        config_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
+        
+        # UI enlargement adjustments: Increase Entry width from 50 to 70
+        config_entry = ttk.Entry(config_frame, textvariable=self.config_path_var, width=70)
+        config_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
 
         browse_button = ttk.Button(config_frame, text="瀏覽...", command=self.browse_config)
         browse_button.pack(side=tk.LEFT)
 
-        # Generate button
+        # UI enlargement adjustments: Increase pady from 10 to 15
         generate_button = ttk.Button(main_frame, text="產生 Lua 程式碼", command=self.run_generation)
-        generate_button.pack(pady=10, fill=tk.X)
+        generate_button.pack(pady=15, fill=tk.X)
 
     def browse_config(self):
         filepath = filedialog.askopenfilename(
