@@ -1,0 +1,171 @@
+{
+  "tcp_connections": {
+    "scanner_socket": {
+      "ip": "192.168.1.100",
+      "port": 2000
+    }
+  },
+  "global_modbus": {
+    "scanner_trigger": "0x3140",
+    "fail_bin_counter": "0x3FFC",
+    "fail_gripper_counter": "0x3FFD",
+    "pass_bin_counter": "0x3FFE"
+  },
+  "stations": [
+    {
+      "name": "input_station",
+      "type": "input"
+    },
+    {
+      "name": "output_station",
+      "type": "output"
+    },
+    {
+      "name": "ng_station",
+      "type": "ng"
+    },
+    {
+      "name": "test_station_1",
+      "type": "test",
+      "dio": {
+        "on_pin": 1,
+        "off_pin": 2
+      },
+      "modbus": {
+        "enable_addr": "0x3001",
+        "status_addr": "0x3101",
+        "result_addr": "0x3310"
+      }
+    },
+    {
+      "name": "test_station_2",
+      "type": "test",
+      "dio": {
+        "on_pin": 2,
+        "off_pin": 3
+      },
+      "modbus": {
+        "enable_addr": "0x3002",
+        "status_addr": "0x3102",
+        "result_addr": "0x3320"
+      }
+    },
+    {
+      "name": "test_station_3",
+      "type": "test",
+      "dio": {
+        "on_pin": 4,
+        "off_pin": 5
+      },
+      "modbus": {
+        "enable_addr": "0x3003",
+        "status_addr": "0x3103",
+        "result_addr": "0x3330"
+      }
+    },
+    {
+      "name": "test_station_4",
+      "type": "test",
+      "dio": {
+        "on_pin": 6,
+        "off_pin": 7
+      },
+      "modbus": {
+        "enable_addr": "0x3004",
+        "status_addr": "0x3104",
+        "result_addr": "0x3340"
+      }
+    },
+    {
+      "name": "test_station_5",
+      "type": "test",
+      "dio": {
+        "on_pin": 7,
+        "off_pin": 8
+      },
+      "modbus": {
+        "enable_addr": "0x3005",
+        "status_addr": "0x3105",
+        "result_addr": "0x3350"
+      }
+    },
+    {
+      "name": "test_station_6",
+      "type": "test",
+      "dio": {
+        "on_pin": 8,
+        "off_pin": 9
+      },
+      "modbus": {
+        "enable_addr": "0x3006",
+        "status_addr": "0x3106",
+        "result_addr": "0x3360"
+      }
+    },
+    {
+      "name": "test_station_7",
+      "type": "test",
+      "dio": {
+        "on_pin": 9,
+        "off_pin": 10
+      },
+      "modbus": {
+        "enable_addr": "0x3007",
+        "status_addr": "0x3107",
+        "result_addr": "0x3370"
+      }
+    },
+    {
+      "name": "test_station_8",
+      "type": "test",
+      "dio": {
+        "on_pin": 10,
+        "off_pin": 11
+      },
+      "modbus": {
+        "enable_addr": "0x3008",
+        "status_addr": "0x3108",
+        "result_addr": "0x3380"
+      }
+    },
+    {
+      "name": "test_station_9",
+      "type": "test",
+      "dio": {
+        "on_pin": 11,
+        "off_pin": 12
+      },
+      "modbus": {
+        "enable_addr": "0x3009",
+        "status_addr": "0x3109",
+        "result_addr": "0x3390"
+      }
+    },
+    {
+      "name": "test_station_10",
+      "type": "test",
+      "dio": {
+        "on_pin": 12,
+        "off_pin": 13
+      },
+      "modbus": {
+        "enable_addr": "0x300A",
+        "status_addr": "0x310A",
+        "result_addr": "0x33A0"
+      }
+    },
+    {
+      "name": "test_station_11",
+      "type": "test",
+      "dio": {
+        "on_pin": 13,
+        "off_pin": 14
+      },
+      "modbus": {
+        "enable_addr": "0x300B",
+        "status_addr": "0x310B",
+        "result_addr": "0x33B0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,381 @@
+--Start To Write RL
+
+{station_booleans}
+
+GrHPcb = false
+
+{station_finish_flags}
+
+{station_test_flags}
+
+Scan1=false
+Scan2=false
+
+Rec1=""
+CheckResult=1
+Result=""
+
+Connect=false
+
+{station_testing_flags}
+rets = 0
+ss = 0
+ss1 = 0
+ss2 = 0
+b1 = 0
+b2 = 0
+b3 = 0
+boot1 = false
+boot2 = false
+boot2 = false
+bootOk1 = false
+bootOk2 = false
+bootOk3 = false
+smcMove = false
+x1 = 0
+x2 = 0
+sn3 = ""
+tt = 0
+RobotServoOn()
+function Timer66()
+	tt = tt + 1
+	DELAY(0.5)
+	--print(tt)
+	if tt < 3 then
+		DO("TowerLightG","ON")
+		DO("TowerLightY","OFF")
+		DO("TowerLightR","OFF")
+	end
+	if tt > 120 then
+		DO("TowerLightG","OFF")
+		DO("TowerLightY","OFF")
+		DO("TowerLightR","OFF")
+	end
+end
+
+function SpeedLow()
+	SpdJ (30)
+	AccJ (7)
+	DecJ (7)
+	SpdL (1000)
+	AccL (10000)
+	DecL (10000)
+	Accur ("ROUGH")
+end 
+
+function SpeedHigh()
+	SpdJ (40)
+	AccJ (50)
+	DecJ (50)
+	SpdL (1000)
+	AccL (12000)
+	DecL (12000)
+	Accur ("ROUGH")
+end 
+
+function Speed(percent)
+    SpdJ(percent)
+    AccJ(percent-10)
+    DecJ(percent-10)
+    SpdL(percent*20)
+    AccL(percent*250)
+    DecL(percent*250)
+    Accur ("ROUGH")
+    --print("SpdJ="..percent..+"AccJ=")--..(percent-10)..+"DecJ="..(percent-10))
+end
+
+-- Placeholder for point definitions
+--[[
+{station_point_definitions}
+]]
+
+function PlacePASS()
+	MovP("SBuffer")
+	MovP("BufFixSpare")
+	--WAIT(DI,21,"OFF")
+	MovL("FixSpare"+Z(80))	
+    MovL("FixSpare")
+	
+	DO("Gripper2","OFF")
+	WAIT(DI,18,"ON")
+	MovL("FixSpare"+Z(80))	
+	MovL("BufFixSpare")
+	MovP("SBuffer")
+end
+
+function PlaceFAIL3()
+	MovP("SBuffer")
+	MovP("BufCvFail3")
+::RetryFail::
+	--if DI(24)==OFF  then			
+            ddd=ReadModbus({modbus_fail_bin_counter},"W")
+            if DI(16)==OFF  then
+            	ddd = 0
+            end
+            MovL("CvFail3" +Y(300) +Z(90))
+            MovL("CvFail3" +Y(300) +Z(30))	
+            MovL("CvFail3" +Y(ddd*90) +Z(30))	
+            MovL("CvFail3" +Y(ddd*90))            
+            DO("Gripper1","OFF")
+            WAIT(DI,21,"ON")
+            MovL("CvFail3" +Y(ddd*90) +Z(90))
+            MovP("BufCvFail3")
+            MovP("SBuffer")
+            ddd = ddd+1
+            if ddd > 2 then
+            	DO("TowerLightG","OFF")
+            	DO("TowerLightY","OFF")
+            	DO("TowerLightR","ON")
+            	WAIT(DI,10,"ON")
+            	WAIT(DI,10,"OFF")
+            	DELAY(1)               
+            	ddd = 0
+            	DO("TowerLightG","ON")
+            	DO("TowerLightY","OFF")
+            	DO("TowerLightR","OFF")
+            end
+            WriteModbus({modbus_fail_bin_counter},"W",ddd)    
+	--else
+    --    DELAY(1)
+    --    goto RetryFail
+    --end 	
+	
+	MovP("SBuffer")
+end
+
+function PlaceFailGripper(Gripper)	
+	if Gripper == 1 then
+        MovP("BufScanFail")	
+    elseif Gripper == 2 then
+    	MovP("BufCvFail1")
+    end
+	if DI("SsFail1") == OFF then
+        fff = 0
+        WriteModbus({modbus_fail_gripper_counter},"W",fff)
+    end     
+  ::CheckCvFail::
+    fff=ReadModbus({modbus_fail_gripper_counter},"W")	
+	if  fff < 5 then
+		if Gripper == 1 then		
+            MovP("BufScanFail")		
+            MovP("ScanFail" +Y(fff*90) +Z(130))	
+            MovL("ScanFail" +Y(fff*90))            
+            DO("Gripper1","OFF")
+            WAIT(DI,21,"ON")            
+            fff = fff+1
+            WriteModbus({modbus_fail_gripper_counter},"W",fff)
+            MovP("ScanFail" +Y(fff*90) +Z(130))
+            MovP("BufScanFail")
+        elseif Gripper == 2 then
+        	MovP("BufCvFail1")		
+            MovP("CvFail1" +Y(fff*90) +Z(130))	
+            MovL("CvFail1" +Y(fff*90))            
+            DO("Gripper2","OFF")
+            WAIT(DI,18,"ON")            
+            fff = fff+1
+            WriteModbus({modbus_fail_gripper_counter},"W",fff)
+            MovP("CvFail1" +Y(fff*90) +Z(130))
+            MovP("BufCvFail1")
+        end 
+        if fff > 4 then
+            DO("TowerLightG","OFF")
+            DO("TowerLightY","ON")
+            WAIT(DI,10,"OFF")
+            fff = 0
+            WriteModbus({modbus_fail_gripper_counter},"W",fff)
+            DO("TowerLightG","ON")
+            DO("TowerLightY","OFF")
+            DO("TowerLightR","OFF")
+        end                
+        MovP("SBuffer")          
+    else
+        DO("TowerLightG","OFF")
+        DO("TowerLightY","ON")
+        WAIT(DI,10,"OFF")
+        fff = 0
+        WriteModbus({modbus_fail_gripper_counter},"W",fff)
+        DO("TowerLightG","ON")
+        DO("TowerLightY","OFF")
+        DO("TowerLightR","OFF")
+        goto CheckCvFail
+    end  
+end
+ 
+function PickToCVIN()
+	WAIT(DI,14,"ON")
+	WAIT(DI,21,"ON")
+	WAIT(DI,20,"OFF")	
+	MovP("SBuffer")
+	MovP("BufLifter")	
+	MovP("BufLifter1")
+    MovL("Lifter1")    
+    DO("Gripper1","ON")
+	WAIT(DI,20,"ON")	
+    MovL("BufLifter1")
+    MovP("BufLifter")
+    MovP("SBuffer")
+   
+end
+
+{station_place_functions}
+
+{station_pick_functions}
+
+RBSocket01=SocketClass("{scanner_socket_ip}",{scanner_socket_port}," ",",",nil, 0.3,5)
+DELAY(3)
+ while true do
+    RBrets = RBSocket01:Receive()
+    if RBrets~=nil then
+    	CMD=RBrets[1]    	
+    	RBrets=nil
+    end 
+    if CMD=="01_R" or CMD=="01_R,01_R" then
+    	print("msgR=",CMD)
+    	CMD=""
+    	break
+    end 
+end
+
+function TcpIpScan()
+    print("Client started.");
+    DELAY (0.5)
+    while true do
+    	dataScan=ReadModbus({modbus_scanner_trigger},"W")
+        if dataScan==1 then
+            WriteModbus({modbus_scanner_trigger},"W",0)
+            ABC = "01_S"
+            RBSocket01:Send(ABC)
+            print("senddata1: 01_S")
+            break            
+        end 
+    end	    
+    while true do
+        RBrets = RBSocket01:Receive()          
+        if RBrets ~= nil then
+            CMD=RBrets[1]   
+            print("CMD: ", CMD)
+            --ret = split (CMD,",")                  
+            sn1 = CMD
+            print("1 = ",sn1)
+            --end
+            RBrets = nil
+            break            
+        end
+        
+    end 
+end
+
+{station_thread_functions}
+
+function Initail()
+	
+	--HomeAuto()
+	Speed(ReadModbus(0x3FFF,"W"))
+	
+	IStep = 99
+	
+	--SpeedHigh()
+	--DO("Gripper1","OFF")
+	--DO("Gripper2","OFF")
+	WAIT(DI,9,"ON") --smc alarm
+	ExtDO(3,9,"OFF")
+	ExtDO(3,10,"OFF")
+	ExtDO(3,11,"OFF")
+	ExtDO(3,12,"OFF")
+	ExtDO(3,13,"OFF")
+	ExtDO(3,14,"OFF") --home
+	ExtDO(3,15,"OFF") --drive
+	ExtDO(3,16,"OFF") --reset
+	DELAY(1)
+	ExtDO(3,16,"ON") --reset
+	DELAY(0.5)
+	ExtDO(3,16,"OFF") 
+	DELAY(0.5)
+	ExtDO(3,14,"ON") --home
+	--WAIT(DI,8,"ON") --smc busy
+	DELAY(0.5)
+	ExtDO(3,14,"OFF")
+	
+	WriteModbus(0x3333,"W",1)
+	
+    {initial_station_status}
+	
+end 
+
+function Main()	
+	Initail()
+	if DO(8)==ON then
+		--PlaceFAIL()
+		PlaceFailGripper(2)
+	end
+	if DO(7)==ON then
+		--PlaceScanFAIL()
+		PlaceFailGripper(1)	
+	end
+	DO("TowerLightG","ON")
+	while true do
+        -- Main loop logic is complex and station-specific,
+        -- It is kept here as a reference and should be edited manually in the template.
+		if IStep==99 then						
+			ppp=ReadModbus({modbus_pass_bin_counter},"W")
+			Status9=ReadModbus(0x3109,"W")
+            Status10=ReadModbus(0x310A,"W")
+            if ppp > 0 and DI(12)==OFF and DI(13)==OFF and (ExtDI(3,1)==ON or Fix9HPCB==false)  and (ExtDI(3,3)==ON or Fix10HPCB==false) then
+            	tt = 0
+            	-- PickPASS2() -- This function is not fully defined in the provided snippet
+                IStep = 99                
+            elseif DI(14)==ON  then
+                tt = 0
+                c1 = 0
+			::TryScan::
+				WriteModbus({modbus_scanner_trigger},"W",1)
+				TcpIpScan()
+				DELAY(1)
+				print("2 = ",sn1)
+				if sn1 ~= nil and #sn1 == 15 and sn3 ~= sn1 and c1> 0  then
+					sn3 = sn1
+                    PickToCVIN()                    
+                    testCam = ReadModbus(0x3333,"W")
+                    testCam = 1
+                    sn2 = sn1
+                    IStep=9004
+                elseif sn1 == "NO"  then   
+                	PickToCVIN()
+                	PlaceFAIL3()                	                   
+                    IStep = 99 
+                elseif sn1 == "ng" or  sn1 == "NG" or c1 > 5 then   
+                	PickToCVIN()
+                	PlaceFAIL3()               	                   
+                    IStep = 99 
+                elseif c1 < 6 then
+                	c1 = c1 + 1
+                	goto TryScan                                   
+				else                    
+                    IStep = 99
+				end
+            else
+                MovP("SBuffer")
+                IStep=8000 
+			end 
+		elseif IStep==88 then	
+			if DI(21)==ON   then
+				tt = 0	
+				-- PickToCamera() -- This function is not fully defined in the provided snippet
+				IStep=9004
+			else
+                MovP("SBuffer")
+                IStep=99
+			end		
+		elseif IStep==9000 then-- FINISH
+			{main_loop_logic}
+        else
+            -- Other IStep logic...
+            DELAY(0.1)
+		end
+		
+		-- Threaded tasks for each fixture
+		{main_loop_thread_calls}
+		
+		DELAY(0.05)
+	end
+end

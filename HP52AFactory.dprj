@@ -1,0 +1,32 @@
+<ProjectFile>
+  <System>
+    <SolutionMode>MS</SolutionMode>
+    <ProjectMode>Normal</ProjectMode>
+    <RobotType>VA</RobotType>
+    <EditType>RL</EditType>
+    <GravitySwitch>0</GravitySwitch>
+    <GravityMass>0</GravityMass>
+    <GravityX>0</GravityX>
+    <GravityY>0</GravityY>
+    <GravityZ>0</GravityZ>
+    <GravityDirectionX>0</GravityDirectionX>
+    <GravityDirectionY>0</GravityDirectionY>
+    <GravityDirectionZ>0</GravityDirectionZ>
+  </System>
+  <RobotLanguageFile>
+    <RLFile>main.lua</RLFile>
+  </RobotLanguageFile>
+  <RobotPointFile>
+    <PointFile>PointFile.bin</PointFile>
+  </RobotPointFile>
+  <UserPointFile>
+    <UserPoint>LPT.bin</UserPoint>
+  </UserPointFile>
+  <MotionPathPointFile />
+  <RegistersDataFile>
+    <RegistersData>RegsData.bin</RegistersData>
+  </RegistersDataFile>
+  <IOFile>
+    <UserIO>UserIO.dio</UserIO>
+  </IOFile>
+</ProjectFile>
